@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"
+    />
+    <title>Klyron — Living Messenger</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-deep: #0a0c12;
+        --bg-surface: #11131b;
+        --card-glass: rgba(25, 30, 40, 0.65);
+        --card-glass-solid: #161c24;
+        --glass-border: rgba(80, 150, 255, 0.2);
+        --text-primary: #f0f3fa;
+        --text-secondary: #9aa4bf;
+        --accent-gradient: linear-gradient(135deg, #a855f7, #06b6d4);
+        --accent-purple: #c084fc;
+        --accent-teal: #2dd4bf;
+        --accent-glow: rgba(168, 85, 247, 0.4);
+        --status-online: #2dd4bf;
+        --status-ring: linear-gradient(145deg, #a855f7, #06b6d4);
+        --danger: #f87171;
+        --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.3);
+        --shadow-glow: 0 0 12px rgba(168, 85, 247, 0.3);
+        --ease-bounce: cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      }
+
+      body.light {
+        --bg-deep: #f1f5f9;
+        --bg-surface: #ffffff;
+        --card-glass: rgba(255, 255, 255, 0.8);
+        --card-glass-solid: #ffffff;
+        --glass-border: rgba(100, 100, 200, 0.25);
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --accent-gradient: linear-gradient(135deg, #7c3aed, #0d9488);
+        --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--bg-deep);
+        color: var(--text-primary);
+        transition:
+          background 0.3s ease,
+          color 0.2s;
+        padding-bottom: 85px;
+        padding-top: env(safe-area-inset-top);
+      }
+
+      /* glassmorphic topbar */
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: var(--card-glass);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--glass-border);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+
+      .logo {
+        font-family: "Space Grotesk", monospace;
+        font-size: 24px;
+        font-weight: 700;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: -0.5px;
+      }
+
+      .menu button {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(4px);
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--text-primary);
+        transition: all 0.2s var(--ease-bounce);
+        width: 40px;
+        height: 40px;
+        border-radius: 30px;
+      }
+      .menu button:active {
+        transform: scale(0.92);
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* status pills */
+      .status-section {
+        background: var(--bg-surface);
+        padding: 16px 0 16px 20px;
+        border-bottom: 1px solid var(--glass-border);
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+      .status-scroll {
+        display: flex;
+        gap: 24px;
+      }
+      .status-item {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        min-width: 72px;
+        transition: transform 0.2s var(--ease-bounce);
+      }
+      .status-item:active {
+        transform: scale(0.94);
+      }
+      .status-ring {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: var(--status-ring);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: subtlePulse 2s infinite;
+      }
+      @keyframes subtlePulse {
+        0% {
+          box-shadow: 0 0 0 0 var(--accent-glow);
+        }
+        70% {
+          box-shadow: 0 0 0 8px rgba(168, 85, 247, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
+        }
+      }
+      .status-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--card-glass-solid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-size: cover;
+      }
+      .add-icon {
+        background: var(--accent-gradient);
+        border: none;
+      }
+
+      /* smart hint with fade animation */
+      .smart-hint {
+        background: linear-gradient(
+          105deg,
+          rgba(168, 85, 247, 0.15),
+          rgba(6, 182, 212, 0.1)
+        );
+        margin: 12px 16px;
+        padding: 12px 18px;
+        border-radius: 28px;
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--glass-border);
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s;
+        cursor: default;
+      }
+      .smart-hint i {
+        color: var(--accent-teal);
+        font-size: 18px;
+      }
+      .hint-text-wrapper {
+        flex: 1;
+        overflow: hidden;
+      }
+      #hintText {
+        display: block;
+        transition:
+          opacity 0.3s ease,
+          transform 0.2s;
+      }
+
+      /* Spaces banner */
+      .spaces-banner {
+        background: var(--card-glass);
+        backdrop-filter: blur(12px);
+        margin: 8px 16px;
+        padding: 14px 18px;
+        border-radius: 28px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        border: 1px solid var(--glass-border);
+        transition: all 0.25s var(--ease-bounce);
+      }
+      .spaces-banner:active {
+        transform: scale(0.98);
+        background: rgba(168, 85, 247, 0.2);
+      }
+      .avatar-stack {
+        display: flex;
+        margin-left: 6px;
+        transition: transform 0.2s ease;
+      }
+      .spaces-banner:hover .avatar-stack {
+        transform: translateX(4px);
+      }
+      .stack-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid var(--bg-surface);
+        margin-left: -8px;
+        background: var(--accent-gradient);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+
+      /* selector tabs */
+      .selector-tabs {
+        display: flex;
+        gap: 12px;
+        padding: 12px 20px;
+        background: transparent;
+      }
+      .selector-pill {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(4px);
+        padding: 8px 20px;
+        border-radius: 40px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: all 0.2s var(--ease-bounce);
+      }
+      .selector-pill.active {
+        background: var(--accent-gradient);
+        color: #0a0c12;
+        box-shadow: var(--shadow-glow);
+        transform: scale(1.02);
+      }
+
+      /* chat list with staggered animations and depth */
+      .chat-list {
+        padding: 0 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .chat-item {
+        display: flex;
+        gap: 16px;
+        padding: 14px 16px;
+        border-radius: 28px;
+        text-decoration: none;
+        transition: all 0.25s var(--ease-bounce);
+        cursor: pointer;
+        align-items: center;
+        background: var(--card-glass);
+        backdrop-filter: blur(4px);
+        border-left: 3px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transform: translateY(12px);
+        animation: fadeSlideUp 0.35s forwards;
+      }
+      @keyframes fadeSlideUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .chat-item:hover {
+        transform: scale(1.01) translateX(4px);
+        background: rgba(168, 85, 247, 0.1);
+        border-left-color: var(--accent-purple);
+      }
+      .avatar-wrap {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+      }
+      .avatar,
+      .avatar-fallback {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: var(--accent-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 24px;
+        box-shadow: var(--shadow-sm);
+        transition:
+          box-shadow 0.2s,
+          filter 0.2s;
+      }
+      .chat-item:hover .avatar-fallback,
+      .chat-item:hover .avatar {
+        filter: brightness(1.05);
+        box-shadow: 0 0 0 3px var(--accent-purple);
+      }
+      .online-dot {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        width: 16px;
+        height: 16px;
+        background: var(--status-online);
+        border-radius: 50%;
+        border: 2px solid var(--bg-deep);
+        box-shadow: 0 0 6px #2dd4bf;
+        animation: pulseOnline 1.8s infinite;
+      }
+      @keyframes pulseOnline {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.9;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .chat-info {
+        flex: 1;
+      }
+      .top-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .name {
+        font-weight: 700;
+        font-size: 17px;
+        letter-spacing: -0.2px;
+      }
+      .msg-preview {
+        font-size: 13px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        background: var(--accent-gradient);
+        color: #0f0f1a;
+        font-weight: bold;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 40px;
+        transition: transform 0.1s;
+      }
+      .encryption-badge {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        font-size: 11px;
+        margin: 20px 16px;
+        opacity: 0.7;
+      }
+      .floating-dock {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--card-glass);
+        backdrop-filter: blur(20px);
+        border-radius: 48px;
+        display: flex;
+        gap: 32px;
+        padding: 12px 28px;
+        border: 1px solid var(--glass-border);
+        z-index: 30;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .nav-link {
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        transition: all 0.2s var(--ease-bounce);
+        cursor: pointer;
+      }
+      .nav-link:active i {
+        transform: scale(0.88);
+      }
+      .nav-link.active {
+        color: var(--accent-teal);
+        text-shadow: 0 0 6px var(--accent-teal);
+      }
+      .fab {
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 30px;
+        background: var(--accent-gradient);
+        border: none;
+        color: #111;
+        font-size: 24px;
+        box-shadow: var(--shadow-glow);
+        cursor: pointer;
+        z-index: 35;
+        transition:
+          transform 0.15s var(--ease-bounce),
+          box-shadow 0.2s;
+      }
+      .fab:active {
+        transform: scale(0.9);
+        box-shadow: 0 0 18px var(--accent-glow);
+      }
+      .empty-state {
+        text-align: center;
+        padding: 50px;
+        color: var(--text-secondary);
+      }
+      .greeting-toast {
+        position: fixed;
+        top: 70px;
+        left: 20px;
+        background: var(--card-glass);
+        backdrop-filter: blur(12px);
+        padding: 6px 14px;
+        border-radius: 40px;
+        font-size: 12px;
+        border: 1px solid var(--glass-border);
+        z-index: 25;
+        pointer-events: none;
+        animation: fadeInOut 4s forwards;
+      }
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        15% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        85% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="logo">KΛYRON</div>
+      <div class="menu">
+        <button id="archiveBtn" aria-label="Archived">
+          <i class="fa-regular fa-clock"></i>
+        </button>
+        <button id="settingsBtn" aria-label="Settings">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+        <button id="themeToggle" aria-label="Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="status-section">
+      <div class="status-scroll" id="statusScroll"></div>
+    </div>
+
+    <div class="smart-hint" id="smartHint">
+      <i class="fa-regular fa-lightbulb"></i>
+      <div class="hint-text-wrapper">
+        <span id="hintText">Connecting intelligence...</span>
+      </div>
+    </div>
+
+    <div class="spaces-banner" id="communityBanner">
+      <i class="fa-regular fa-compass"></i>
+      <div>
+        <strong>Spaces</strong
+        ><small style="display: block; font-size: 11px"
+          >Connect with circles & live groups</small
+        >
+      </div>
+      <div class="avatar-stack">
+        <div class="stack-avatar">✨</div>
+        <div class="stack-avatar">🌐</div>
+        <div class="stack-avatar">🎧</div>
+      </div>
+      <i class="fa-solid fa-arrow-right"></i>
+    </div>
+
+    <div class="search-container" style="padding: 8px 16px">
+      <div
+        class="search-wrapper"
+        style="
+          background: var(--card-glass);
+          backdrop-filter: blur(8px);
+          border-radius: 40px;
+          padding: 6px 16px;
+          display: flex;
+          gap: 12px;
+        "
+      >
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search or start new chat"
+          autocomplete="off"
+          style="
+            background: transparent;
+            border: none;
+            flex: 1;
+            color: var(--text-primary);
+            outline: none;
+          "
+        />
+        <button
+          class="camera-btn"
+          id="cameraBtn"
+          style="background: transparent; border: none"
+        >
+          <i class="fa-solid fa-camera"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="selector-tabs">
+      <div class="selector-pill" data-filter="priority">Priority</div>
+      <div class="selector-pill" data-filter="recent">Recent</div>
+      <div class="selector-pill" data-filter="people">People</div>
+      <div class="selector-pill" data-filter="groups">Groups</div>
+    </div>
+
+    <div class="chat-list" id="chatList"></div>
+    <div class="empty-state" id="emptyState">
+      ✨ No conversations — start new connection
+    </div>
+    <div class="encryption-badge">
+      <i class="fa-solid fa-key"></i> Quantum-resistant encryption · Klyron mesh
+    </div>
+
+    <button class="fab" id="newChatFab">
+      <i class="fa-regular fa-message"></i>
+    </button>
+
+    <div class="floating-dock">
+      <div class="nav-link active" data-nav="chats">
+        <i class="fa-regular fa-comment-dots"></i><span>Chats</span>
+      </div>
+      <div class="nav-link" data-nav="status">
+        <i class="fa-regular fa-circle"></i><span>Updates</span>
+      </div>
+      <div class="nav-link" data-nav="calls">
+        <i class="fa-solid fa-waveform"></i><span>Voice</span>
+      </div>
+      <div class="nav-link" data-nav="communities">
+        <i class="fa-regular fa-star"></i><span>Spaces</span>
+      </div>
+    </div>
+
+    <script>
+      // ---------- USER DATA (extended) ----------
+      const users = [
+        {
+          id: "amina",
+          name: "Amina",
+          time: "10:42",
+          lastMessage: "Typing...",
+          unread: 2,
+          online: true,
+          lastSeen: "online",
+          photo: "https://i.pravatar.cc/150?img=47",
+          statusStory: true,
+          isGroup: false,
+          accent: "#c084fc",
+        },
+        {
+          id: "james",
+          name: "James",
+          time: "09:18",
+          lastMessage: "See you later bro",
+          unread: 0,
+          online: false,
+          lastSeen: "last seen today at 8:45",
+          photo: "https://i.pravatar.cc/150?img=12",
+          statusStory: false,
+          isGroup: false,
+          accent: "#60a5fa",
+        },
+        {
+          id: "lina",
+          name: "Lina",
+          time: "Yesterday",
+          lastMessage: "😂😂😂",
+          unread: 5,
+          online: true,
+          lastSeen: "online",
+          photo: "https://i.pravatar.cc/150?img=32",
+          statusStory: true,
+          isGroup: false,
+          accent: "#f472b6",
+        },
+        {
+          id: "kelvin",
+          name: "Kelvin",
+          time: "08:03",
+          lastMessage: "Send me the file",
+          unread: 1,
+          online: false,
+          lastSeen: "last seen yesterday",
+          photo: "https://i.pravatar.cc/150?img=15",
+          statusStory: false,
+          accent: "#4ade80",
+        },
+        {
+          id: "zainab",
+          name: "Zainab",
+          time: "Mon",
+          lastMessage: "Thanks dear 💜",
+          unread: 0,
+          online: true,
+          lastSeen: "online",
+          photo: "https://i.pravatar.cc/150?img=45",
+          statusStory: true,
+          accent: "#facc15",
+        },
+        {
+          id: "marcus",
+          name: "Marcus (Dev Circle)",
+          time: "18:20",
+          lastMessage: "📢 Meeting at 7pm",
+          unread: 0,
+          online: false,
+          lastSeen: "last seen 2h ago",
+          photo: "",
+          isGroup: true,
+          groupMembers: 8,
+          accent: "#a855f7",
+        },
+      ];
+      const storyStatuses = [
+        {
+          name: "Lina",
+          hasStory: true,
+          photo: "https://i.pravatar.cc/150?img=32",
+        },
+        {
+          name: "Amina",
+          hasStory: true,
+          photo: "https://i.pravatar.cc/150?img=47",
+        },
+        {
+          name: "Zainab",
+          hasStory: true,
+          photo: "https://i.pravatar.cc/150?img=45",
+        },
+      ];
+
+      let currentFilter = "priority";
+      let searchQuery = "";
+      let hintInterval;
+      let dynamicIntervals = [];
+
+      const chatListEl = document.getElementById("chatList");
+      const emptyStateEl = document.getElementById("emptyState");
+      const searchInput = document.getElementById("searchInput");
+      const statusScroll = document.getElementById("statusScroll");
+      const hintTextSpan = document.getElementById("hintText");
+
+      // Helper functions
+      function formatMessagePreview(msg) {
+        const emojiRegex =
+          /^([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F1E6}-\u{1F1FF}]+)$/u;
+        if (emojiRegex.test(msg.trim()))
+          return `<span class="emoji-only" style="font-size:20px;">${msg}</span>`;
+        if (msg.includes("voice"))
+          return `<i class="fa-solid fa-microphone"></i> ${msg}`;
+        return msg;
+      }
+
+      function avatarHTML(user) {
+        const firstLetter = user.name.charAt(0).toUpperCase();
+        const accentColor = user.accent || "#a855f7";
+        const glowStyle = `box-shadow: 0 0 0 2px ${accentColor}40;`;
+        if (user.isGroup)
+          return `<div class="avatar-wrap"><div class="avatar-fallback" style="background: linear-gradient(135deg,#a855f7,#2dd4bf);"><i class="fa-solid fa-users"></i></div>${user.online ? '<div class="online-dot"></div>' : ""}</div>`;
+        if (user.photo)
+          return `<div class="avatar-wrap"><img class="avatar" src="${user.photo}" style="${glowStyle}" onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-img').style.display='flex';"><div class="avatar-fallback fallback-img" style="display:none;">${firstLetter}</div>${user.online ? '<div class="online-dot"></div>' : ""}</div>`;
+        return `<div class="avatar-wrap"><div class="avatar-fallback" style="background: ${accentColor};">${firstLetter}</div>${user.online ? '<div class="online-dot"></div>' : ""}</div>`;
+      }
+
+      function getStaggerDelay(index) {
+        return `${index * 0.03}s`;
+      }
+
+      // MODIFIED: Navigation function for chat items
+      function navigateToChat(user) {
+        // Store the complete user object in localStorage
+        localStorage.setItem("klyron_active_chat", JSON.stringify(user));
+        // Redirect to chat page
+        window.location.href = "chart.html";
+      }
+
+      function renderChats() {
+        const query = searchQuery.toLowerCase();
+        let filtered = [...users];
+        filtered = filtered.filter((u) => u.name.toLowerCase().includes(query));
+        if (currentFilter === "priority") {
+          filtered = filtered.filter((u) => u.unread > 0 || u.online);
+          filtered.sort((a, b) => b.unread - a.unread || b.online - a.online);
+        } else if (currentFilter === "recent") {
+          filtered.sort((a, b) =>
+            a.time === "now" ? -1 : b.time.localeCompare(a.time),
+          );
+        } else if (currentFilter === "people") {
+          filtered = filtered.filter((u) => !u.isGroup);
+        } else if (currentFilter === "groups") {
+          filtered = filtered.filter((u) => u.isGroup);
+        }
+        if (filtered.length === 0) {
+          chatListEl.innerHTML = "";
+          emptyStateEl.style.display = "block";
+          return;
+        }
+        emptyStateEl.style.display = "none";
+        chatListEl.innerHTML = filtered
+          .map((user, idx) => {
+            const previewHtml = formatMessagePreview(user.lastMessage);
+            const groupTag = user.isGroup
+              ? `<span style="font-size:10px; background:rgba(168,85,247,0.2); padding:2px 8px; border-radius:40px;">◉ Circle</span>`
+              : "";
+            const statusLine = user.online
+              ? '<span style="color:#2dd4bf; font-weight:500;">● Live</span>'
+              : `<span style="font-size:11px;">${user.lastSeen || "away"}</span>`;
+            const accentBorder = `border-left-color: ${user.accent || "#a855f7"};`;
+            return `<div class="chat-item" data-user-id="${user.id}" style="animation-delay: ${getStaggerDelay(idx)}; ${accentBorder}">
+          ${avatarHTML(user)}
+          <div class="chat-info">
+            <div class="top-row"><span class="name">${user.name} ${groupTag}</span><span class="time">${user.time}</span></div>
+            <div class="msg-preview">${previewHtml} ${user.unread > 0 ? `<span class="badge" style="background: ${user.accent || "#a855f7"};">${user.unread}</span>` : ""}</div>
+            <div style="margin-top: 6px; font-size: 11px;">${statusLine}</div>
+          </div>
+        </div>`;
+          })
+          .join("");
+        
+        // MODIFIED: Add click handlers for navigation instead of alerts
+        document.querySelectorAll(".chat-item").forEach((el) => {
+          const userId = el.getAttribute("data-user-id");
+          const user = users.find((u) => u.id === userId);
+          if (user) {
+            el.addEventListener("click", (e) => {
+              e.preventDefault();
+              navigateToChat(user);
+            });
+          }
+        });
+      }
+
+      // DYNAMIC SMART HINT ROTATION
+      let hintIndex = 0;
+      const hintMessages = [
+        () =>
+          `💡 You have ${users.reduce((a, b) => a + b.unread, 0)} unread messages. Prioritize wisely.`,
+        () =>
+          `🌟 ${users.filter((u) => u.online).length} friends online — say hello!`,
+        () =>
+          `🔔 ${users.find((u) => u.unread > 2)?.name || "Amina"} might need a reply.`,
+        () => `✨ Klyron mesh — quantum-secure & always listening.`,
+        () => `🎙️ Long press anywhere → instant voice message.`,
+      ];
+      function rotateHint() {
+        if (!hintTextSpan) return;
+        hintTextSpan.style.opacity = "0";
+        setTimeout(() => {
+          let newText = hintMessages[hintIndex % hintMessages.length]();
+          if (currentFilter === "priority")
+            newText =
+              `🔥 Priority mode: ${users.filter((u) => u.unread > 0).length} urgent chats. ` +
+              newText;
+          hintTextSpan.innerText = newText;
+          hintTextSpan.style.opacity = "1";
+          hintIndex++;
+        }, 200);
+      }
+      function startHintRotation() {
+        if (hintInterval) clearInterval(hintInterval);
+        rotateHint();
+        hintInterval = setInterval(rotateHint, 6500);
+      }
+
+      // BUILD STATUS
+      function buildStatusRow() {
+        let html = `<div class="status-item" id="myStatusBtn"><div class="status-ring my-status-ring"><div class="status-avatar add-icon" style="background:var(--accent-gradient);"><i class="fa-solid fa-plus"></i></div></div><span class="status-name">My status</span></div>`;
+        storyStatuses.forEach((story) => {
+          html += `<div class="status-item" data-status-user="${story.name}"><div class="status-ring"><div class="status-avatar" style="background-image: url(${story.photo}); background-size: cover;"></div></div><span class="status-name">${story.name}</span></div>`;
+        });
+        statusScroll.innerHTML = html;
+        document
+          .querySelectorAll("[data-status-user]")
+          .forEach((el) =>
+            el.addEventListener("click", () =>
+              alert("✨ Story rings — animated updates"),
+            ),
+          );
+        document
+          .getElementById("myStatusBtn")
+          ?.addEventListener("click", () =>
+            alert("📸 Share a moment · futuristic status"),
+          );
+      }
+
+      // DYNAMIC GREETING & LONG PRESS VOICE
+      function showDynamicGreeting() {
+        const hour = new Date().getHours();
+        let greeting = "";
+        if (hour < 12) greeting = "☀️ Good morning, explorer.";
+        else if (hour < 18) greeting = "🌤️ Good afternoon, creator.";
+        else greeting = "🌙 Good evening, dreamer.";
+        const toast = document.createElement("div");
+        toast.className = "greeting-toast";
+        toast.innerText = `${greeting} Klyron is alive ✨`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+      }
+      function simulateVoiceCapture() {
+        alert(
+          "🎙️ Voice capture simulated: 'Message recorded — AI transcribing'",
+        );
+        const toast = document.createElement("div");
+        toast.className = "greeting-toast";
+        toast.innerText = "🎤 Listening... voice draft ready.";
+        toast.style.background = "var(--accent-gradient)";
+        toast.style.color = "#111";
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+      }
+      // Global long-press detector
+      let pressTimer = null;
+      document.addEventListener("touchstart", (e) => {
+        pressTimer = setTimeout(() => {
+          simulateVoiceCapture();
+          pressTimer = null;
+        }, 600);
+      });
+      document.addEventListener("touchend", () => {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      });
+      document.addEventListener("mousedown", (e) => {
+        pressTimer = setTimeout(() => {
+          simulateVoiceCapture();
+          pressTimer = null;
+        }, 600);
+      });
+      document.addEventListener("mouseup", () => {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      });
+
+      // FILTER WITH SMOOTH STAGGER
+      function setActiveFilter(pill, filterValue) {
+        document
+          .querySelectorAll(".selector-pill")
+          .forEach((p) => p.classList.remove("active"));
+        pill.classList.add("active");
+        currentFilter = filterValue;
+        chatListEl.style.opacity = "0.6";
+        setTimeout(() => {
+          renderChats();
+          chatListEl.style.opacity = "1";
+        }, 80);
+        updateSmartHintContext();
+      }
+      function updateSmartHintContext() {
+        rotateHint();
+      }
+
+      // ONLINE PULSE REFRESH
+      let onlineToggleInterval;
+      function startPresenceJitter() {
+        if (onlineToggleInterval) clearInterval(onlineToggleInterval);
+        onlineToggleInterval = setInterval(() => {
+          const lina = users.find((u) => u.id === "lina");
+          if (lina) {
+            lina.online = !lina.online;
+            lina.lastSeen = lina.online ? "online" : "last seen 2 min ago";
+            renderChats();
+          }
+          const zainab = users.find((u) => u.id === "zainab");
+          if (zainab) {
+            zainab.online = !zainab.online;
+            zainab.lastSeen = zainab.online ? "online" : "last seen 5 min ago";
+            renderChats();
+          }
+        }, 20000);
+      }
+
+      // SOFT REFRESH
+      function softRefresh() {
+        renderChats();
+        updateSmartHintContext();
+        const loader = document.createElement("div");
+        loader.innerText = "⟳";
+        loader.style.position = "fixed";
+        loader.style.top = "20px";
+        loader.style.left = "50%";
+        loader.style.background = "var(--accent-gradient)";
+        loader.style.padding = "6px 12px";
+        loader.style.borderRadius = "40px";
+        loader.style.zIndex = "999";
+        loader.style.fontSize = "14px";
+        document.body.appendChild(loader);
+        setTimeout(() => loader.remove(), 800);
+      }
+      let touchStartY = 0;
+      document.addEventListener("touchstart", (e) => {
+        if (window.scrollY === 0) touchStartY = e.touches[0].clientY;
+      });
+      document.addEventListener("touchmove", (e) => {
+        if (touchStartY && e.touches[0].clientY - touchStartY > 90) {
+          touchStartY = 0;
+          softRefresh();
+        }
+      });
+
+      // THEME
+      const toggleBtn = document.getElementById("themeToggle");
+      const themeIcon = toggleBtn.querySelector("i");
+      if (localStorage.getItem("klyronTheme") === "light") {
+        document.body.classList.add("light");
+        themeIcon.classList.replace("fa-moon", "fa-sun");
+      }
+      toggleBtn.addEventListener("click", () => {
+        document.body.classList.toggle("light");
+        const isLight = document.body.classList.contains("light");
+        localStorage.setItem("klyronTheme", isLight ? "light" : "dark");
+        themeIcon.className = isLight ? "fa-solid fa-sun" : "fa-solid fa-moon";
+      });
+
+      // Event listeners
+      document.querySelectorAll(".selector-pill").forEach((pill) => {
+        pill.addEventListener("click", () =>
+          setActiveFilter(pill, pill.getAttribute("data-filter")),
+        );
+      });
+      document
+        .getElementById("newChatFab")
+        .addEventListener("click", () =>
+          alert("✨ New conversation · Voice or text"),
+        );
+      document
+        .getElementById("cameraBtn")
+        .addEventListener("click", () =>
+          alert("📸 Capture moment · AI captions"),
+        );
+      document
+        .getElementById("archiveBtn")
+        .addEventListener("click", () =>
+          alert("📦 Archived · stored in secure vault"),
+        );
+      document
+        .getElementById("settingsBtn")
+        .addEventListener("click", () =>
+          alert("⚙️ Klyron OS · themes, privacy, neural settings"),
+        );
+      document
+        .getElementById("communityBanner")
+        .addEventListener("click", () =>
+          alert("🌀 Spaces — dynamic circles, live events, shared timelines"),
+        );
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const navType = link.getAttribute("data-nav");
+          document
+            .querySelectorAll(".nav-link")
+            .forEach((l) => l.classList.remove("active"));
+          link.classList.add("active");
+          if (navType !== "chats")
+            alert(`🚀 "${navType}" module — immersive experience coming soon`);
+          else renderChats();
+        });
+      });
+      searchInput.addEventListener("input", (e) => {
+        clearTimeout(window.searchDebounce);
+        window.searchDebounce = setTimeout(() => {
+          searchQuery = e.target.value;
+          renderChats();
+        }, 150);
+      });
+
+      // TYPING SIMULATOR
+      setTimeout(() => {
+        const amina = users.find((u) => u.id === "amina");
+        if (amina && amina.lastMessage === "Typing...") {
+          amina.lastMessage = "Hey! How are you? ✨";
+          amina.time = "now";
+          renderChats();
+        }
+      }, 4000);
+
+      function init() {
+        buildStatusRow();
+        renderChats();
+        startHintRotation();
+        startPresenceJitter();
+        setActiveFilter(
+          document.querySelector('.selector-pill[data-filter="priority"]'),
+          "priority",
+        );
+        showDynamicGreeting();
+      }
+      init();
+    </script>
+  </body>
+</html>
