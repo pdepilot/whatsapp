@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -62,7 +62,9 @@
         font-family: "Inter", sans-serif;
         background: var(--bg-deep);
         color: var(--text-primary);
-        transition: background 0.3s ease, color 0.2s;
+        transition:
+          background 0.3s ease,
+          color 0.2s;
         padding-bottom: calc(85px + var(--safe-bottom));
         padding-top: env(safe-area-inset-top);
         min-height: 100vh;
@@ -144,7 +146,7 @@
         backdrop-filter: blur(2px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
-      
+
       .status-scroll {
         display: flex;
         gap: clamp(16px, 5vw, 32px);
@@ -204,7 +206,11 @@
 
       /* smart hint */
       .smart-hint {
-        background: linear-gradient(105deg, rgba(168, 85, 247, 0.15), rgba(6, 182, 212, 0.1));
+        background: linear-gradient(
+          105deg,
+          rgba(168, 85, 247, 0.15),
+          rgba(6, 182, 212, 0.1)
+        );
         margin: 12px clamp(12px, 4vw, 20px);
         padding: 10px 16px;
         border-radius: 32px;
@@ -679,17 +685,99 @@
     <script>
       // ---------- USER DATA (preserved) ----------
       const users = [
-        { id: "amina", name: "Amina", time: "10:42", lastMessage: "Typing...", unread: 2, online: true, lastSeen: "online", photo: "https://i.pravatar.cc/150?img=47", statusStory: true, isGroup: false, accent: "#c084fc" },
-        { id: "james", name: "James", time: "09:18", lastMessage: "See you later bro", unread: 0, online: false, lastSeen: "last seen today at 8:45", photo: "https://i.pravatar.cc/150?img=12", statusStory: false, isGroup: false, accent: "#60a5fa" },
-        { id: "lina", name: "Lina", time: "Yesterday", lastMessage: "😂😂😂", unread: 5, online: true, lastSeen: "online", photo: "https://i.pravatar.cc/150?img=32", statusStory: true, isGroup: false, accent: "#f472b6" },
-        { id: "kelvin", name: "Kelvin", time: "08:03", lastMessage: "Send me the file", unread: 1, online: false, lastSeen: "last seen yesterday", photo: "https://i.pravatar.cc/150?img=15", statusStory: false, accent: "#4ade80" },
-        { id: "zainab", name: "Zainab", time: "Mon", lastMessage: "Thanks dear 💜", unread: 0, online: true, lastSeen: "online", photo: "https://i.pravatar.cc/150?img=45", statusStory: true, accent: "#facc15" },
-        { id: "marcus", name: "Marcus (Dev Circle)", time: "18:20", lastMessage: "📢 Meeting at 7pm", unread: 0, online: false, lastSeen: "last seen 2h ago", photo: "", isGroup: true, groupMembers: 8, accent: "#a855f7" },
+        {
+          id: "amina",
+          name: "Amina",
+          time: "10:42",
+          lastMessage: "Typing...",
+          unread: 2,
+          online: true,
+          lastSeen: "online",
+          photo: "https://i.pravatar.cc/150?img=47",
+          statusStory: true,
+          isGroup: false,
+          accent: "#c084fc",
+        },
+        {
+          id: "james",
+          name: "James",
+          time: "09:18",
+          lastMessage: "See you later bro",
+          unread: 0,
+          online: false,
+          lastSeen: "last seen today at 8:45",
+          photo: "https://i.pravatar.cc/150?img=12",
+          statusStory: false,
+          isGroup: false,
+          accent: "#60a5fa",
+        },
+        {
+          id: "lina",
+          name: "Lina",
+          time: "Yesterday",
+          lastMessage: "😂😂😂",
+          unread: 5,
+          online: true,
+          lastSeen: "online",
+          photo: "https://i.pravatar.cc/150?img=32",
+          statusStory: true,
+          isGroup: false,
+          accent: "#f472b6",
+        },
+        {
+          id: "kelvin",
+          name: "Kelvin",
+          time: "08:03",
+          lastMessage: "Send me the file",
+          unread: 1,
+          online: false,
+          lastSeen: "last seen yesterday",
+          photo: "https://i.pravatar.cc/150?img=15",
+          statusStory: false,
+          accent: "#4ade80",
+        },
+        {
+          id: "zainab",
+          name: "Zainab",
+          time: "Mon",
+          lastMessage: "Thanks dear 💜",
+          unread: 0,
+          online: true,
+          lastSeen: "online",
+          photo: "https://i.pravatar.cc/150?img=45",
+          statusStory: true,
+          accent: "#facc15",
+        },
+        {
+          id: "marcus",
+          name: "Marcus (Dev Circle)",
+          time: "18:20",
+          lastMessage: "📢 Meeting at 7pm",
+          unread: 0,
+          online: false,
+          lastSeen: "last seen 2h ago",
+          photo: "",
+          isGroup: true,
+          groupMembers: 8,
+          accent: "#a855f7",
+        },
       ];
       const storyStatuses = [
-        { name: "Lina", hasStory: true, photo: "https://i.pravatar.cc/150?img=32" },
-        { name: "Amina", hasStory: true, photo: "https://i.pravatar.cc/150?img=47" },
-        { name: "Zainab", hasStory: true, photo: "https://i.pravatar.cc/150?img=45" },
+        {
+          name: "Lina",
+          hasStory: true,
+          photo: "https://i.pravatar.cc/150?img=32",
+        },
+        {
+          name: "Amina",
+          hasStory: true,
+          photo: "https://i.pravatar.cc/150?img=47",
+        },
+        {
+          name: "Zainab",
+          hasStory: true,
+          photo: "https://i.pravatar.cc/150?img=45",
+        },
       ];
 
       let currentFilter = "priority";
@@ -702,21 +790,28 @@
       const hintTextSpan = document.getElementById("hintText");
 
       function formatMessagePreview(msg) {
-        const emojiRegex = /^([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F1E6}-\u{1F1FF}]+)$/u;
-        if (emojiRegex.test(msg.trim())) return `<span class="emoji-only" style="font-size:20px;">${msg}</span>`;
-        if (msg.includes("voice")) return `<i class="fa-solid fa-microphone"></i> ${msg}`;
+        const emojiRegex =
+          /^([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F1E6}-\u{1F1FF}]+)$/u;
+        if (emojiRegex.test(msg.trim()))
+          return `<span class="emoji-only" style="font-size:20px;">${msg}</span>`;
+        if (msg.includes("voice"))
+          return `<i class="fa-solid fa-microphone"></i> ${msg}`;
         return msg;
       }
 
       function avatarHTML(user) {
         const firstLetter = user.name.charAt(0).toUpperCase();
         const accentColor = user.accent || "#a855f7";
-        if (user.isGroup) return `<div class="avatar-wrap"><div class="avatar-fallback" style="background: linear-gradient(135deg,#a855f7,#2dd4bf);"><i class="fa-solid fa-users"></i></div>${user.online ? '<div class="online-dot"></div>' : ""}</div>`;
-        if (user.photo) return `<div class="avatar-wrap"><img class="avatar" src="${user.photo}" style="box-shadow:0 0 0 2px ${accentColor}40;" onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-img').style.display='flex';"><div class="avatar-fallback fallback-img" style="display:none;">${firstLetter}</div>${user.online ? '<div class="online-dot"></div>' : ""}</div>`;
+        if (user.isGroup)
+          return `<div class="avatar-wrap"><div class="avatar-fallback" style="background: linear-gradient(135deg,#a855f7,#2dd4bf);"><i class="fa-solid fa-users"></i></div>${user.online ? '<div class="online-dot"></div>' : ""}</div>`;
+        if (user.photo)
+          return `<div class="avatar-wrap"><img class="avatar" src="${user.photo}" style="box-shadow:0 0 0 2px ${accentColor}40;" onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-img').style.display='flex';"><div class="avatar-fallback fallback-img" style="display:none;">${firstLetter}</div>${user.online ? '<div class="online-dot"></div>' : ""}</div>`;
         return `<div class="avatar-wrap"><div class="avatar-fallback" style="background: ${accentColor};">${firstLetter}</div>${user.online ? '<div class="online-dot"></div>' : ""}</div>`;
       }
 
-      function getStaggerDelay(index) { return `${index * 0.03}s`; }
+      function getStaggerDelay(index) {
+        return `${index * 0.03}s`;
+      }
 
       function navigateToChat(user) {
         localStorage.setItem("klyron_active_chat", JSON.stringify(user));
@@ -725,16 +820,20 @@
 
       function renderChats() {
         const query = searchQuery.toLowerCase();
-        let filtered = [...users].filter(u => u.name.toLowerCase().includes(query));
+        let filtered = [...users].filter((u) =>
+          u.name.toLowerCase().includes(query),
+        );
         if (currentFilter === "priority") {
-          filtered = filtered.filter(u => u.unread > 0 || u.online);
+          filtered = filtered.filter((u) => u.unread > 0 || u.online);
           filtered.sort((a, b) => b.unread - a.unread || b.online - a.online);
         } else if (currentFilter === "recent") {
-          filtered.sort((a, b) => (a.time === "now" ? -1 : b.time.localeCompare(a.time)));
+          filtered.sort((a, b) =>
+            a.time === "now" ? -1 : b.time.localeCompare(a.time),
+          );
         } else if (currentFilter === "people") {
-          filtered = filtered.filter(u => !u.isGroup);
+          filtered = filtered.filter((u) => !u.isGroup);
         } else if (currentFilter === "groups") {
-          filtered = filtered.filter(u => u.isGroup);
+          filtered = filtered.filter((u) => u.isGroup);
         }
         if (filtered.length === 0) {
           chatListEl.innerHTML = "";
@@ -742,12 +841,17 @@
           return;
         }
         emptyStateEl.style.display = "none";
-        chatListEl.innerHTML = filtered.map((user, idx) => {
-          const previewHtml = formatMessagePreview(user.lastMessage);
-          const groupTag = user.isGroup ? `<span style="font-size:10px; background:rgba(168,85,247,0.2); padding:2px 8px; border-radius:40px;">◉ Circle</span>` : "";
-          const statusLine = user.online ? '<span style="color:#2dd4bf; font-weight:500;">● Live</span>' : `<span style="font-size:11px;">${user.lastSeen || "away"}</span>`;
-          const accentBorder = `border-left-color: ${user.accent || "#a855f7"};`;
-          return `<div class="chat-item" data-user-id="${user.id}" style="animation-delay: ${getStaggerDelay(idx)}; ${accentBorder}">
+        chatListEl.innerHTML = filtered
+          .map((user, idx) => {
+            const previewHtml = formatMessagePreview(user.lastMessage);
+            const groupTag = user.isGroup
+              ? `<span style="font-size:10px; background:rgba(168,85,247,0.2); padding:2px 8px; border-radius:40px;">◉ Circle</span>`
+              : "";
+            const statusLine = user.online
+              ? '<span style="color:#2dd4bf; font-weight:500;">● Live</span>'
+              : `<span style="font-size:11px;">${user.lastSeen || "away"}</span>`;
+            const accentBorder = `border-left-color: ${user.accent || "#a855f7"};`;
+            return `<div class="chat-item" data-user-id="${user.id}" style="animation-delay: ${getStaggerDelay(idx)}; ${accentBorder}">
           ${avatarHTML(user)}
           <div class="chat-info">
             <div class="top-row"><span class="name">${user.name} ${groupTag}</span><span class="time">${user.time}</span></div>
@@ -755,19 +859,27 @@
             <div style="margin-top: 4px; font-size: 11px;">${statusLine}</div>
           </div>
         </div>`;
-        }).join("");
+          })
+          .join("");
         document.querySelectorAll(".chat-item").forEach((el) => {
           const userId = el.getAttribute("data-user-id");
-          const user = users.find(u => u.id === userId);
-          if (user) el.addEventListener("click", (e) => { e.preventDefault(); navigateToChat(user); });
+          const user = users.find((u) => u.id === userId);
+          if (user)
+            el.addEventListener("click", (e) => {
+              e.preventDefault();
+              navigateToChat(user);
+            });
         });
       }
 
       let hintIndex = 0;
       const hintMessages = [
-        () => `💡 You have ${users.reduce((a, b) => a + b.unread, 0)} unread messages. Prioritize wisely.`,
-        () => `🌟 ${users.filter(u => u.online).length} friends online — say hello!`,
-        () => `🔔 ${users.find(u => u.unread > 2)?.name || "Amina"} might need a reply.`,
+        () =>
+          `💡 You have ${users.reduce((a, b) => a + b.unread, 0)} unread messages. Prioritize wisely.`,
+        () =>
+          `🌟 ${users.filter((u) => u.online).length} friends online — say hello!`,
+        () =>
+          `🔔 ${users.find((u) => u.unread > 2)?.name || "Amina"} might need a reply.`,
         () => `✨ Klyron mesh — quantum-secure & always listening.`,
         () => `🎙️ Long press anywhere → instant voice message.`,
       ];
@@ -776,7 +888,10 @@
         hintTextSpan.style.opacity = "0";
         setTimeout(() => {
           let newText = hintMessages[hintIndex % hintMessages.length]();
-          if (currentFilter === "priority") newText = `🔥 Priority mode: ${users.filter(u => u.unread > 0).length} urgent chats. ` + newText;
+          if (currentFilter === "priority")
+            newText =
+              `🔥 Priority mode: ${users.filter((u) => u.unread > 0).length} urgent chats. ` +
+              newText;
           hintTextSpan.innerText = newText;
           hintTextSpan.style.opacity = "1";
           hintIndex++;
@@ -794,33 +909,77 @@
           html += `<div class="status-item" data-status-user="${story.name}"><div class="status-ring"><div class="status-avatar" style="background-image: url(${story.photo}); background-size: cover;"></div></div><span class="status-name">${story.name}</span></div>`;
         });
         statusScroll.innerHTML = html;
-        document.querySelectorAll("[data-status-user]").forEach(el => el.addEventListener("click", () => alert("✨ Story rings — animated updates")));
-        document.getElementById("myStatusBtn")?.addEventListener("click", () => alert("📸 Share a moment · futuristic status"));
+        document
+          .querySelectorAll("[data-status-user]")
+          .forEach((el) =>
+            el.addEventListener("click", () =>
+              alert("✨ Story rings — animated updates"),
+            ),
+          );
+        document
+          .getElementById("myStatusBtn")
+          ?.addEventListener("click", () =>
+            alert("📸 Share a moment · futuristic status"),
+          );
       }
 
       function showDynamicGreeting() {
         const hour = new Date().getHours();
-        let greeting = hour < 12 ? "☀️ Good morning, explorer." : (hour < 18 ? "🌤️ Good afternoon, creator." : "🌙 Good evening, dreamer.");
+        let greeting =
+          hour < 12
+            ? "☀️ Good morning, explorer."
+            : hour < 18
+              ? "🌤️ Good afternoon, creator."
+              : "🌙 Good evening, dreamer.";
         const toast = document.createElement("div");
         toast.className = "greeting-toast";
         toast.innerText = `${greeting} Klyron is alive ✨`;
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 4000);
       }
-      
-      function simulateVoiceCapture() { alert("🎙️ Voice capture simulated: 'Message recorded — AI transcribing'"); }
+
+      function simulateVoiceCapture() {
+        alert(
+          "🎙️ Voice capture simulated: 'Message recorded — AI transcribing'",
+        );
+      }
       let pressTimer = null;
-      document.addEventListener("touchstart", (e) => { pressTimer = setTimeout(() => { simulateVoiceCapture(); pressTimer = null; }, 600); });
-      document.addEventListener("touchend", () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
-      document.addEventListener("mousedown", (e) => { pressTimer = setTimeout(() => { simulateVoiceCapture(); pressTimer = null; }, 600); });
-      document.addEventListener("mouseup", () => { if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; } });
+      document.addEventListener("touchstart", (e) => {
+        pressTimer = setTimeout(() => {
+          simulateVoiceCapture();
+          pressTimer = null;
+        }, 600);
+      });
+      document.addEventListener("touchend", () => {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      });
+      document.addEventListener("mousedown", (e) => {
+        pressTimer = setTimeout(() => {
+          simulateVoiceCapture();
+          pressTimer = null;
+        }, 600);
+      });
+      document.addEventListener("mouseup", () => {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      });
 
       function setActiveFilter(pill, filterValue) {
-        document.querySelectorAll(".selector-pill").forEach(p => p.classList.remove("active"));
+        document
+          .querySelectorAll(".selector-pill")
+          .forEach((p) => p.classList.remove("active"));
         pill.classList.add("active");
         currentFilter = filterValue;
         chatListEl.style.opacity = "0.6";
-        setTimeout(() => { renderChats(); chatListEl.style.opacity = "1"; }, 80);
+        setTimeout(() => {
+          renderChats();
+          chatListEl.style.opacity = "1";
+        }, 80);
         rotateHint();
       }
 
@@ -828,29 +987,107 @@
       function startPresenceJitter() {
         if (onlineToggleInterval) clearInterval(onlineToggleInterval);
         onlineToggleInterval = setInterval(() => {
-          const lina = users.find(u => u.id === "lina");
-          if (lina) { lina.online = !lina.online; lina.lastSeen = lina.online ? "online" : "last seen 2 min ago"; renderChats(); }
-          const zainab = users.find(u => u.id === "zainab");
-          if (zainab) { zainab.online = !zainab.online; zainab.lastSeen = zainab.online ? "online" : "last seen 5 min ago"; renderChats(); }
+          const lina = users.find((u) => u.id === "lina");
+          if (lina) {
+            lina.online = !lina.online;
+            lina.lastSeen = lina.online ? "online" : "last seen 2 min ago";
+            renderChats();
+          }
+          const zainab = users.find((u) => u.id === "zainab");
+          if (zainab) {
+            zainab.online = !zainab.online;
+            zainab.lastSeen = zainab.online ? "online" : "last seen 5 min ago";
+            renderChats();
+          }
         }, 20000);
       }
 
       function init() {
-        buildStatusRow(); renderChats(); startHintRotation(); startPresenceJitter();
-        setActiveFilter(document.querySelector('.selector-pill[data-filter="priority"]'), "priority");
+        buildStatusRow();
+        renderChats();
+        startHintRotation();
+        startPresenceJitter();
+        setActiveFilter(
+          document.querySelector('.selector-pill[data-filter="priority"]'),
+          "priority",
+        );
         showDynamicGreeting();
-        searchInput.addEventListener("input", (e) => { clearTimeout(window.searchDebounce); window.searchDebounce = setTimeout(() => { searchQuery = e.target.value; renderChats(); }, 150); });
-        document.querySelectorAll(".selector-pill").forEach(pill => pill.addEventListener("click", () => setActiveFilter(pill, pill.getAttribute("data-filter"))));
-        document.getElementById("newChatFab").addEventListener("click", () => alert("✨ New conversation · Voice or text"));
-        document.getElementById("cameraBtn").addEventListener("click", () => alert("📸 Capture moment · AI captions"));
-        document.getElementById("archiveBtn").addEventListener("click", () => alert("📦 Archived · stored in secure vault"));
-        document.getElementById("settingsBtn").addEventListener("click", () => alert("⚙️ Klyron OS · themes, privacy, neural settings"));
-        document.getElementById("communityBanner").addEventListener("click", () => alert("🌀 Spaces — dynamic circles, live events, shared timelines"));
-        document.querySelectorAll(".nav-link").forEach(link => link.addEventListener("click", (e) => { e.preventDefault(); const navType = link.getAttribute("data-nav"); document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active")); link.classList.add("active"); if (navType !== "chats") alert(`🚀 "${navType}" module — immersive experience coming soon`); else renderChats(); }));
-        const toggleBtn = document.getElementById("themeToggle"), themeIcon = toggleBtn.querySelector("i");
-        if (localStorage.getItem("klyronTheme") === "light") { document.body.classList.add("light"); themeIcon.classList.replace("fa-moon", "fa-sun"); }
-        toggleBtn.addEventListener("click", () => { document.body.classList.toggle("light"); const isLight = document.body.classList.contains("light"); localStorage.setItem("klyronTheme", isLight ? "light" : "dark"); themeIcon.className = isLight ? "fa-solid fa-sun" : "fa-solid fa-moon"; });
-        setTimeout(() => { const amina = users.find(u => u.id === "amina"); if (amina && amina.lastMessage === "Typing...") { amina.lastMessage = "Hey! How are you? ✨"; amina.time = "now"; renderChats(); } }, 4000);
+        searchInput.addEventListener("input", (e) => {
+          clearTimeout(window.searchDebounce);
+          window.searchDebounce = setTimeout(() => {
+            searchQuery = e.target.value;
+            renderChats();
+          }, 150);
+        });
+        document
+          .querySelectorAll(".selector-pill")
+          .forEach((pill) =>
+            pill.addEventListener("click", () =>
+              setActiveFilter(pill, pill.getAttribute("data-filter")),
+            ),
+          );
+        document
+          .getElementById("newChatFab")
+          .addEventListener("click", () =>
+            alert("✨ New conversation · Voice or text"),
+          );
+        document
+          .getElementById("cameraBtn")
+          .addEventListener("click", () =>
+            alert("📸 Capture moment · AI captions"),
+          );
+        document
+          .getElementById("archiveBtn")
+          .addEventListener("click", () =>
+            alert("📦 Archived · stored in secure vault"),
+          );
+        document
+          .getElementById("settingsBtn")
+          .addEventListener("click", () =>
+            alert("⚙️ Klyron OS · themes, privacy, neural settings"),
+          );
+        document
+          .getElementById("communityBanner")
+          .addEventListener("click", () =>
+            alert("🌀 Spaces — dynamic circles, live events, shared timelines"),
+          );
+        document.querySelectorAll(".nav-link").forEach((link) =>
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const navType = link.getAttribute("data-nav");
+            document
+              .querySelectorAll(".nav-link")
+              .forEach((l) => l.classList.remove("active"));
+            link.classList.add("active");
+            if (navType !== "chats")
+              alert(
+                `🚀 "${navType}" module — immersive experience coming soon`,
+              );
+            else renderChats();
+          }),
+        );
+        const toggleBtn = document.getElementById("themeToggle"),
+          themeIcon = toggleBtn.querySelector("i");
+        if (localStorage.getItem("klyronTheme") === "light") {
+          document.body.classList.add("light");
+          themeIcon.classList.replace("fa-moon", "fa-sun");
+        }
+        toggleBtn.addEventListener("click", () => {
+          document.body.classList.toggle("light");
+          const isLight = document.body.classList.contains("light");
+          localStorage.setItem("klyronTheme", isLight ? "light" : "dark");
+          themeIcon.className = isLight
+            ? "fa-solid fa-sun"
+            : "fa-solid fa-moon";
+        });
+        setTimeout(() => {
+          const amina = users.find((u) => u.id === "amina");
+          if (amina && amina.lastMessage === "Typing...") {
+            amina.lastMessage = "Hey! How are you? ✨";
+            amina.time = "now";
+            renderChats();
+          }
+        }, 4000);
       }
       init();
     </script>
