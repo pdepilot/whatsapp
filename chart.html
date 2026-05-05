@@ -21,7 +21,6 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        user-select: none; /* better for touch, input still editable */
       }
 
       html,
@@ -49,14 +48,12 @@
         --header-height: 70px;
         --safe-area-top: env(safe-area-inset-top);
         --safe-area-bottom: env(safe-area-inset-bottom);
-        --msg-aged-opacity: 0.82;
       }
 
       body {
         font-family: "Inter", sans-serif;
         background: var(--bg-deep);
         color: var(--text-primary);
-        transition: background 0.2s ease;
         height: 100vh;
         display: flex;
         flex-direction: column;
@@ -64,7 +61,7 @@
         width: 100%;
       }
 
-      /* FIXED HEADER */
+      /* Fixed header - exactly as original */
       .chat-header {
         position: fixed;
         top: 0;
@@ -78,17 +75,104 @@
         padding-top: max(10px, var(--safe-area-top));
         background: var(--card-glass);
         backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border-bottom: 1px solid var(--glass-border);
         height: var(--header-height);
         width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
 
       .header-spacer {
         height: var(--header-height);
+        width: 100%;
         flex-shrink: 0;
       }
 
-      /* scrollable messages */
+      .back-btn {
+        background: none;
+        border: none;
+        font-size: 22px;
+        cursor: pointer;
+        color: var(--text-primary);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .back-btn:active {
+        transform: scale(0.92);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .chat-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--card-glass-solid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+        cursor: pointer;
+      }
+
+      .chat-title {
+        flex: 1;
+        min-width: 0;
+        cursor: pointer;
+        overflow: hidden;
+      }
+      .chat-title h3 {
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .chat-title p {
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .menu-icons {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .menu-icons button {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 18px;
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s;
+      }
+      .menu-icons button:active {
+        transform: scale(0.92);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Messages container */
       .messages-container {
         flex: 1;
         overflow-y: auto;
@@ -105,26 +189,39 @@
         );
         background-size: 24px 24px;
         -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      .messages-container::-webkit-scrollbar {
+        width: 4px;
+      }
+      .messages-container::-webkit-scrollbar-thumb {
+        background: var(--accent-purple);
+        border-radius: 4px;
       }
 
       .message {
         display: flex;
         max-width: 88%;
-        animation: messagePop 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        animation: fadeInUp 0.25s ease;
         position: relative;
         transition: opacity 0.2s;
       }
       .message.aged {
-        opacity: var(--msg-aged-opacity);
+        opacity: 0.75;
       }
-      @keyframes messagePop {
-        0% {
+      @keyframes fadeInUp {
+        from {
           opacity: 0;
-          transform: scale(0.96) translateY(6px);
+          transform: translateY(8px);
         }
-        100% {
+        to {
           opacity: 1;
-          transform: scale(1) translateY(0);
+          transform: translateY(0);
+        }
+      }
+      @media (max-width: 480px) {
+        .message {
+          max-width: 92%;
         }
       }
 
@@ -144,11 +241,21 @@
         word-wrap: break-word;
         max-width: 100%;
         position: relative;
-        transition: box-shadow 0.2s;
       }
       .sent .bubble {
         background: var(--bubble-out);
         border-bottom-right-radius: 5px;
+        animation: bubblePop 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      }
+      @keyframes bubblePop {
+        0% {
+          transform: scale(0.96);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
       }
       .received .bubble {
         background: var(--bubble-in);
@@ -156,32 +263,29 @@
         border: 1px solid var(--glass-border);
         border-bottom-left-radius: 5px;
       }
-      /* seen ripple effect */
+
+      /* Seen glow ripple */
       .message.seen-glow .bubble {
-        box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.6);
         animation: seenRipple 0.5s ease-out;
       }
       @keyframes seenRipple {
         0% {
-          box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.5);
-        }
-        70% {
-          box-shadow: 0 0 0 8px rgba(168, 85, 247, 0);
+          box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.6);
         }
         100% {
-          box-shadow: 0 0 0 0 transparent;
+          box-shadow: 0 0 0 12px rgba(168, 85, 247, 0);
         }
       }
 
-      /* ----- Custom status (traveling dot, echo) ----- */
+      /* Custom status system */
       .msg-status {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        position: relative;
-        width: 18px;
+        width: 20px;
         height: 14px;
         margin-left: 6px;
+        position: relative;
       }
       .status-dot {
         width: 8px;
@@ -189,12 +293,10 @@
         background: var(--accent-teal);
         border-radius: 50%;
         display: inline-block;
-        opacity: 0.9;
       }
-      /* sent animation: traveling dot */
       .msg-status[data-status="sent"] .status-dot {
-        animation: travelDot 0.4s cubic-bezier(0.2, 1, 0.3, 1) forwards;
-        transform: translateX(-8px);
+        animation: travelDot 0.4s forwards;
+        transform: translateX(-6px);
         opacity: 0;
       }
       @keyframes travelDot {
@@ -202,7 +304,7 @@
           transform: translateX(-8px);
           opacity: 0;
         }
-        30% {
+        40% {
           opacity: 1;
         }
         100% {
@@ -210,10 +312,8 @@
           opacity: 1;
         }
       }
-      /* delivered: echo pulses */
       .msg-status[data-status="delivered"] .status-dot {
-        animation: echoPulse 0.6s ease-out;
-        box-shadow: 0 0 0 0 var(--accent-teal);
+        animation: echoPulse 0.5s ease-out;
       }
       @keyframes echoPulse {
         0% {
@@ -221,7 +321,7 @@
           transform: scale(0.8);
         }
         50% {
-          box-shadow: 0 0 0 5px rgba(45, 212, 191, 0.3);
+          box-shadow: 0 0 0 5px rgba(45, 212, 191, 0.4);
           transform: scale(1);
         }
         100% {
@@ -229,17 +329,25 @@
           transform: scale(1);
         }
       }
-      /* seen uses parent glow, status icon can also be double tick but we keep minimal */
       .msg-status[data-status="seen"] .status-dot {
         background: var(--accent-purple);
-        transform: scale(1);
       }
 
-      /* File card responsiveness */
+      .message-time {
+        font-size: 10px;
+        color: var(--text-secondary);
+        margin-top: 5px;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      /* File card */
       .file-card {
         display: flex;
-        gap: 10px;
         align-items: center;
+        gap: 10px;
         flex-wrap: wrap;
         background: rgba(0, 0, 0, 0.2);
         border-radius: 16px;
@@ -268,33 +376,28 @@
         cursor: pointer;
       }
 
-      /* Voice note WAVEFORM player (Canvas) */
+      /* Voice note waveform */
       .voice-waveform-container {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         flex-wrap: wrap;
-        margin-top: 6px;
       }
       canvas.waveform-canvas {
         background: rgba(0, 0, 0, 0.3);
         border-radius: 20px;
-        height: 38px;
         width: 140px;
+        height: 36px;
         cursor: pointer;
       }
       .voice-play-btn {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.15);
         border: none;
         border-radius: 30px;
         padding: 5px 12px;
         font-size: 12px;
         cursor: pointer;
         color: var(--accent-teal);
-      }
-      .voice-duration {
-        font-size: 11px;
-        font-family: monospace;
       }
 
       /* Input area */
@@ -324,7 +427,7 @@
       }
       .message-input-wrapper:focus-within {
         border-color: var(--accent-purple);
-        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3);
+        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
       }
       .message-input {
         flex: 1;
@@ -348,7 +451,7 @@
       }
       .send-btn.loading {
         transform: scale(0.95);
-        filter: brightness(0.9);
+        filter: brightness(0.8);
         pointer-events: none;
       }
       .send-btn:active {
@@ -372,6 +475,57 @@
         transform: scale(0.94);
         background: rgba(255, 255, 255, 0.1);
       }
+      .mic-btn.recording-active {
+        background: #ff4d4d;
+        color: white;
+        animation: pulseMic 1.2s infinite;
+      }
+      @keyframes pulseMic {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.6);
+        }
+        50% {
+          transform: scale(1.06);
+          box-shadow: 0 0 0 6px rgba(255, 77, 77, 0.3);
+        }
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(255, 77, 77, 0);
+        }
+      }
+
+      .emoji-picker {
+        position: absolute;
+        bottom: 80px;
+        left: 12px;
+        right: 12px;
+        background: var(--card-glass);
+        backdrop-filter: blur(24px);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        padding: 12px;
+        display: none;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+        z-index: 120;
+        max-height: 220px;
+        overflow-y: auto;
+      }
+      .emoji-picker.active {
+        display: grid;
+      }
+      .emoji-option {
+        font-size: 28px;
+        text-align: center;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 40px;
+      }
+      .emoji-option:active {
+        background: var(--accent-glow);
+        transform: scale(1.05);
+      }
 
       /* Incoming call overlay */
       .incoming-call-overlay {
@@ -388,7 +542,7 @@
         justify-content: center;
         flex-direction: column;
         gap: 24px;
-        animation: fadeIn 0.2s;
+        animation: fadeInUp 0.2s;
       }
       .caller-avatar {
         width: 100px;
@@ -404,11 +558,9 @@
       @keyframes pulseRing {
         0% {
           box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.6);
-          transform: scale(1);
         }
         50% {
           box-shadow: 0 0 0 18px rgba(168, 85, 247, 0.2);
-          transform: scale(1.02);
         }
         100% {
           box-shadow: 0 0 0 0 rgba(168, 85, 247, 0);
@@ -435,13 +587,13 @@
         color: white;
       }
 
-      /* swipe reply preview */
+      /* Reply preview */
       .reply-preview {
         background: var(--card-glass-solid);
         border-left: 4px solid var(--accent-purple);
         padding: 6px 12px;
         font-size: 12px;
-        margin-bottom: 6px;
+        margin: 0 12px 6px 12px;
         border-radius: 16px;
         display: flex;
         justify-content: space-between;
@@ -452,9 +604,10 @@
         border: none;
         color: var(--text-secondary);
         cursor: pointer;
+        font-size: 16px;
       }
 
-      /* reactions floating */
+      /* Reaction emoji */
       .reaction-emoji {
         display: inline-block;
         background: var(--card-glass);
@@ -462,15 +615,15 @@
         padding: 2px 8px;
         font-size: 12px;
         margin-right: 4px;
-        animation: floatUp 0.3s ease-out;
+        animation: floatReaction 0.3s ease-out;
       }
-      @keyframes floatUp {
+      @keyframes floatReaction {
         0% {
-          transform: translateY(8px) scale(0.7);
+          transform: translateY(10px) scale(0.5);
           opacity: 0;
         }
-        70% {
-          transform: translateY(-2px) scale(1.1);
+        60% {
+          transform: translateY(-3px) scale(1.1);
         }
         100% {
           transform: translateY(0) scale(1);
@@ -478,16 +631,82 @@
         }
       }
 
-      .message-time {
-        font-size: 10px;
-        color: var(--text-secondary);
-        margin-top: 5px;
+      .message-reactions {
+        margin-top: 4px;
         display: flex;
-        justify-content: flex-end;
+        flex-wrap: wrap;
         gap: 4px;
       }
-      button {
-        touch-action: manipulation;
+
+      .call-indicator-bar {
+        position: fixed;
+        top: var(--header-height);
+        left: 12px;
+        right: 12px;
+        background: var(--card-glass);
+        backdrop-filter: blur(16px);
+        border-radius: 40px;
+        padding: 8px 16px;
+        display: flex;
+        justify-content: space-between;
+        z-index: 110;
+      }
+      .end-call-float {
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 60px;
+        background: #ff3b30;
+        border-radius: 50%;
+        border: none;
+        font-size: 26px;
+        color: white;
+        cursor: pointer;
+        z-index: 120;
+        box-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
+      }
+
+      .contact-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s;
+      }
+      .contact-modal.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .contact-modal-content {
+        background: var(--card-glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 40px;
+        padding: 24px;
+        width: 280px;
+        text-align: center;
+      }
+      .modal-avatar {
+        width: 85px;
+        height: 85px;
+        border-radius: 50%;
+        margin: 0 auto 16px;
+        background: var(--accent-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 38px;
       }
     </style>
   </head>
@@ -502,15 +721,16 @@
         <p id="onlineStatus"></p>
       </div>
       <div class="menu-icons">
-        <button id="audioCallBtn"><i class="fa-solid fa-phone"></i></button
-        ><button id="videoCallBtn"><i class="fa-solid fa-video"></i></button
-        ><button id="menuMoreBtn">
+        <button id="audioCallBtn"><i class="fa-solid fa-phone"></i></button>
+        <button id="videoCallBtn"><i class="fa-solid fa-video"></i></button>
+        <button id="menuMoreBtn">
           <i class="fa-solid fa-ellipsis-vertical"></i>
         </button>
       </div>
     </div>
     <div class="header-spacer"></div>
     <div class="messages-container" id="messagesContainer"></div>
+
     <div class="input-area">
       <button class="attach-btn" id="attachBtn">
         <i class="fa-solid fa-paperclip"></i>
@@ -522,60 +742,36 @@
           id="messageInput"
           placeholder="Type a message"
           autocomplete="off"
-        /><button class="emoji-btn" id="emojiBtn">
+        />
+        <button class="emoji-btn" id="emojiBtn">
           <i class="fa-regular fa-face-smile"></i>
         </button>
       </div>
       <button class="mic-btn" id="micBtn">
-        <i class="fa-solid fa-microphone"></i></button
-      ><button class="send-btn" id="sendBtn">
+        <i class="fa-solid fa-microphone"></i>
+      </button>
+      <button class="send-btn" id="sendBtn">
         <i class="fa-regular fa-paper-plane"></i>
       </button>
     </div>
-    <div
-      class="emoji-picker"
-      id="emojiPicker"
-      style="
-        display: none;
-        position: absolute;
-        bottom: 80px;
-        left: 12px;
-        right: 12px;
-        background: var(--card-glass);
-        border-radius: 28px;
-        padding: 12px;
-        display: none;
-        grid-template-columns: repeat(6, 1fr);
-        z-index: 120;
-      "
-    ></div>
-    <div
-      class="contact-modal"
-      id="contactModal"
-      style="
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(8px);
-        z-index: 200;
-        align-items: center;
-        justify-content: center;
-      "
-    >
-      <div
-        class="contact-modal-content"
-        style="
-          background: var(--card-glass);
-          border-radius: 40px;
-          padding: 24px;
-          text-align: center;
-        "
-      >
+
+    <div class="emoji-picker" id="emojiPicker"></div>
+    <div class="contact-modal" id="contactModal">
+      <div class="contact-modal-content">
         <div class="modal-avatar" id="modalAvatar">A</div>
         <div class="modal-name" id="modalName"></div>
         <div class="modal-status" id="modalStatus"></div>
-        <button class="modal-btn" id="modalCallBtn">
+        <button
+          class="modal-btn"
+          id="modalCallBtn"
+          style="
+            background: var(--accent-gradient);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            margin-top: 16px;
+          "
+        >
           <i class="fa-solid fa-phone"></i> Call
         </button>
       </div>
@@ -588,7 +784,7 @@
     />
 
     <script>
-      // ---------- KLYRON ENHANCED ----------
+      // Klyron Enhanced - Full preservation of original structure + upgrades
       let currentContact = null;
       let callState = "idle",
         currentCallType = null,
@@ -602,9 +798,9 @@
         voiceChunks = [],
         isRecording = false,
         recordingStartTime = null;
-      let replyToMessage = null; // swipe reply
+      let replyToMessage = null;
+      let activeAudio = null;
 
-      // helper functions
       function escapeHtml(str) {
         if (!str) return "";
         return str.replace(
@@ -614,8 +810,8 @@
       }
       function formatFileSize(bytes) {
         if (!bytes) return "0 B";
-        const k = 1024;
-        const sizes = ["B", "KB", "MB"];
+        const k = 1024,
+          sizes = ["B", "KB", "MB"];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
       }
@@ -641,33 +837,11 @@
         localStorage.setItem(getUnifiedKey(), JSON.stringify(items));
       }
       function addToTimeline(item) {
-        let history = loadUnifiedHistory();
-        history.push(item);
-        history.sort((a, b) => a.timestamp - b.timestamp);
-        saveUnifiedHistory(history);
+        let h = loadUnifiedHistory();
+        h.push(item);
+        h.sort((a, b) => a.timestamp - b.timestamp);
+        saveUnifiedHistory(h);
         renderUnifiedTimeline();
-        applyAgingEffect();
-      }
-
-      // aging effect: older than 2h dim
-      function applyAgingEffect() {
-        const now = Date.now();
-        document.querySelectorAll(".message").forEach((msgEl) => {
-          const timeAttr = msgEl.getAttribute("data-timestamp");
-          if (timeAttr) {
-            const ts = parseInt(timeAttr);
-            if (now - ts > 2 * 60 * 60 * 1000) msgEl.classList.add("aged");
-            else msgEl.classList.remove("aged");
-          }
-        });
-      }
-
-      let activeAudio = null;
-      function stopActiveAudio() {
-        if (activeAudio) {
-          activeAudio.pause();
-          activeAudio = null;
-        }
       }
 
       function renderUnifiedTimeline() {
@@ -686,29 +860,41 @@
             });
             let statusHtml = "";
             if (item.sender === "sent") {
-              let status = item.status || "sent";
+              const status = item.status || "sent";
               statusHtml = `<span class="msg-status" data-status="${status}"><i class="status-dot"></i></span>`;
               if (status === "seen")
                 setTimeout(() => div.classList.add("seen-glow"), 50);
             }
             let reactionsHtml = item.reactions?.length
-              ? `<div class="message-reactions" style="margin-top:4px;">${item.reactions.map((r) => `<span class="reaction-emoji">${r}</span>`).join("")}</div>`
+              ? `<div class="message-reactions">${item.reactions.map((r) => `<span class="reaction-emoji">${r}</span>`).join("")}</div>`
               : "";
-            div.innerHTML = `<div class="bubble">${escapeHtml(item.text)}${reactionsHtml}<div class="message-time"><span>${timeStr}</span>${statusHtml}</div></div>`;
+            let replyHtml = item.replyTo
+              ? `<div style="font-size:10px; opacity:0.7; margin-bottom:4px;">↩️ ${escapeHtml(item.replyTo.text.substring(0, 40))}</div>`
+              : "";
+            div.innerHTML = `<div class="bubble">${replyHtml}${escapeHtml(item.text)}${reactionsHtml}<div class="message-time"><span>${timeStr}</span>${statusHtml}</div></div>`;
             container.appendChild(div);
             if (
               item.sender === "sent" &&
               (!item.status || item.status === "sent")
             ) {
               setTimeout(() => {
-                updateMessageStatus(item, idx, "delivered");
+                let h = loadUnifiedHistory();
+                if (h[idx] && h[idx].status !== "seen") {
+                  h[idx].status = "delivered";
+                  saveUnifiedHistory(h);
+                  renderUnifiedTimeline();
+                }
               }, 800);
               setTimeout(() => {
-                updateMessageStatus(item, idx, "seen");
+                let h = loadUnifiedHistory();
+                if (h[idx] && h[idx].status !== "seen") {
+                  h[idx].status = "seen";
+                  saveUnifiedHistory(h);
+                  renderUnifiedTimeline();
+                }
               }, 1800);
             }
           } else if (item.type === "file") {
-            /* file rendering kept similar but add download */
             const div = document.createElement("div");
             div.className = `message ${item.sender === "sent" ? "sent" : "received"}`;
             div.setAttribute("data-timestamp", item.timestamp);
@@ -718,50 +904,42 @@
             });
             div.innerHTML = `<div class="bubble"><div class="file-card"><div class="file-icon"><i class="fa-solid fa-file"></i></div><div class="file-info"><div class="file-name">${escapeHtml(item.fileName)}</div><div class="file-size">${item.fileSizeLabel}</div></div><button class="download-btn" data-url="${item.dataURL}"><i class="fa-solid fa-download"></i> Open</button></div><div class="message-time">${timeStr}</div></div>`;
             container.appendChild(div);
-            div.querySelector(".download-btn").addEventListener("click", () => {
+            div.querySelector(".download-btn").onclick = () => {
               const a = document.createElement("a");
-              a.href = div.querySelector(".download-btn").dataset.url;
+              a.href = item.dataURL;
               a.download = item.fileName;
               a.click();
-            });
+            };
           } else if (item.type === "voice_note") {
             const div = document.createElement("div");
-            div.className = `message sent`;
+            div.className = "message sent";
             div.setAttribute("data-timestamp", item.timestamp);
             const timeStr = new Date(item.timestamp).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             });
-            div.innerHTML = `<div class="bubble"><div class="voice-waveform-container"><button class="voice-play-btn"><i class="fa-solid fa-play"></i> Play</button><canvas class="waveform-canvas" width="140" height="36" style="width:140px; height:36px;"></canvas><span class="voice-duration">${item.duration}</span></div><div class="message-time">${timeStr}</div></div>`;
+            div.innerHTML = `<div class="bubble"><div class="voice-waveform-container"><button class="voice-play-btn"><i class="fa-solid fa-play"></i> Play</button><canvas class="waveform-canvas" width="140" height="36"></canvas><span class="voice-duration">${item.duration}</span></div><div class="message-time">${timeStr}</div></div>`;
             container.appendChild(div);
-            const btn = div.querySelector(".voice-play-btn");
-            const canvas = div.querySelector(".waveform-canvas");
-            const audioData = item.audioData;
-            const audio = new Audio(audioData);
+            const btn = div.querySelector(".voice-play-btn"),
+              canvas = div.querySelector(".waveform-canvas"),
+              audio = new Audio(item.audioData);
             const ctx = canvas.getContext("2d");
             const bars = Array(20)
-              .fill(0)
-              .map(() => Math.random() * 20 + 4);
-            function drawWaveform(progress = 0) {
+              .fill()
+              .map(() => Math.random() * 18 + 4);
+            function draw(progress = 0) {
               ctx.clearRect(0, 0, canvas.width, canvas.height);
-              const barWidth = canvas.width / bars.length - 2;
-              for (let i = 0; i < bars.length; i++) {
-                let height = bars[i] * (i < progress * bars.length ? 1.2 : 0.7);
+              const w = canvas.width / bars.length - 2;
+              bars.forEach((h, i) => {
                 ctx.fillStyle =
                   i < progress * bars.length ? "#2dd4bf" : "#9aa4bf";
-                ctx.fillRect(
-                  i * (barWidth + 2),
-                  canvas.height - height,
-                  barWidth,
-                  height,
-                );
-              }
+                ctx.fillRect(i * (w + 2), canvas.height - h, w, h);
+              });
             }
-            drawWaveform(0);
+            draw(0);
             let playing = false;
-            btn.addEventListener("click", (e) => {
-              e.stopPropagation();
-              stopActiveAudio();
+            btn.onclick = () => {
+              if (activeAudio && activeAudio !== audio) activeAudio.pause();
               if (playing) {
                 audio.pause();
                 playing = false;
@@ -775,70 +953,58 @@
                 audio.onended = () => {
                   playing = false;
                   btn.innerHTML = '<i class="fa-solid fa-play"></i> Play';
-                  drawWaveform(0);
+                  draw(0);
                 };
-                const interval = setInterval(() => {
-                  if (audio.currentTime && audio.duration) {
-                    drawWaveform(audio.currentTime / audio.duration);
+                const iv = setInterval(() => {
+                  if (audio.duration) {
+                    draw(audio.currentTime / audio.duration);
+                    if (!playing) clearInterval(iv);
                   }
-                  if (!playing) clearInterval(interval);
                 }, 100);
               }
-            });
-            canvas.addEventListener("click", (e) => {
+            };
+            canvas.onclick = (e) => {
               const rect = canvas.getBoundingClientRect();
               const x = e.clientX - rect.left;
-              const percent = x / rect.width;
-              if (audio.duration) {
-                audio.currentTime = percent * audio.duration;
-              }
-            });
-          } else if (item.type === "audio_call" || item.type === "video_call") {
-            /* call log simplified */
+              if (audio.duration)
+                audio.currentTime = (x / rect.width) * audio.duration;
+            };
           }
         });
+        // aging effect: older than 2h dim
+        const now = Date.now();
+        document.querySelectorAll(".message").forEach((el) => {
+          const ts = parseInt(el.dataset.timestamp);
+          if (now - ts > 2 * 3600000) el.classList.add("aged");
+          else el.classList.remove("aged");
+        });
         container.scrollTop = container.scrollHeight;
-        applyAgingEffect();
       }
 
-      function updateMessageStatus(item, idx, newStatus) {
-        let history = loadUnifiedHistory();
-        if (
-          history[idx] &&
-          history[idx].type === "message" &&
-          history[idx].sender === "sent"
-        ) {
-          if (history[idx].status !== "seen") {
-            history[idx].status = newStatus;
-            saveUnifiedHistory(history);
-            renderUnifiedTimeline();
-          }
-        }
-      }
-
-      function addTextMessage(text, sender, replyContext = null) {
+      function addTextMessage(text, sender, replyCtx = null) {
         if (!text.trim()) return;
-        const newMsg = {
+        addToTimeline({
           type: "message",
           text: text.trim(),
           sender,
           timestamp: Date.now(),
           status: "sent",
           reactions: [],
-          replyTo: replyContext
-            ? { text: replyContext.text, sender: replyContext.sender }
+          replyTo: replyCtx
+            ? { text: replyCtx.text, sender: replyCtx.sender }
             : null,
-        };
-        addToTimeline(newMsg);
+        });
         if (sender === "sent") {
           document.querySelector(".send-btn")?.classList.add("loading");
-          setTimeout(() => {
-            document.querySelector(".send-btn")?.classList.remove("loading");
-          }, 300);
+          setTimeout(
+            () =>
+              document.querySelector(".send-btn")?.classList.remove("loading"),
+            300,
+          );
           setTimeout(() => {
             addToTimeline({
               type: "message",
-              text: "✨ Nice!",
+              text: "✨ Love it!",
               sender: "received",
               timestamp: Date.now(),
               status: "seen",
@@ -846,29 +1012,30 @@
             });
           }, 1800);
         }
+        if (replyCtx) {
+          replyToMessage = null;
+          document.querySelector(".reply-preview")?.remove();
+        }
       }
 
-      // INCOMING CALL animated screen simulation
+      // Call enhancements
       function showIncomingCall() {
-        const overlay = document.createElement("div");
-        overlay.className = "incoming-call-overlay";
-        overlay.innerHTML = `<div class="caller-avatar">${currentContact.name.charAt(0)}</div><h3 style="color:white;">Incoming call...</h3><div class="incoming-buttons"><button class="accept-call"><i class="fa-solid fa-phone"></i></button><button class="decline-call"><i class="fa-solid fa-phone-slash"></i></button></div>`;
-        document.body.appendChild(overlay);
-        overlay.querySelector(".accept-call").onclick = () => {
-          overlay.remove();
-          startAudioCall(true);
+        const ov = document.createElement("div");
+        ov.className = "incoming-call-overlay";
+        ov.innerHTML = `<div class="caller-avatar">${currentContact.name.charAt(0)}</div><h3 style="color:white;">Incoming call...</h3><div class="incoming-buttons"><button class="accept-call"><i class="fa-solid fa-phone"></i></button><button class="decline-call"><i class="fa-solid fa-phone-slash"></i></button></div>`;
+        document.body.appendChild(ov);
+        ov.querySelector(".accept-call").onclick = () => {
+          ov.remove();
+          startAudioCall();
         };
-        overlay.querySelector(".decline-call").onclick = () => {
-          overlay.remove();
-        };
+        ov.querySelector(".decline-call").onclick = () => ov.remove();
       }
-
-      async function startAudioCall(simulatedIncoming = false) {
+      async function startAudioCall() {
         if (callState !== "idle") return;
-        currentCallType = "audio";
         callState = "calling";
+        currentCallType = "audio";
         showCallBarAndFloat("Connecting...");
-        setTimeout(async () => {
+        setTimeout(() => {
           callState = "connected";
           callStartTimestamp = Date.now();
           startCallTimer();
@@ -877,8 +1044,8 @@
       }
       async function startVideoCall() {
         if (callState !== "idle") return;
-        currentCallType = "video";
         callState = "calling";
+        currentCallType = "video";
         showCallBarAndFloat("Starting video...");
         setTimeout(() => {
           callState = "connected";
@@ -891,22 +1058,20 @@
         if (callTimerInterval) clearInterval(callTimerInterval);
         callTimerInterval = setInterval(() => {
           if (callState === "connected" && callStartTimestamp) {
-            const elapsed = Math.floor(
-              (Date.now() - callStartTimestamp) / 1000,
-            );
-            const mins = Math.floor(elapsed / 60),
-              secs = elapsed % 60;
-            const timerSpan = document.getElementById("callTimerDisplay");
-            if (timerSpan)
-              timerSpan.innerText = `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+            const e = Math.floor((Date.now() - callStartTimestamp) / 1000);
+            const m = Math.floor(e / 60),
+              s = e % 60;
+            const d = document.getElementById("callTimerDisplay");
+            if (d)
+              d.innerText = `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
           }
         }, 1000);
       }
-      function showCallBarAndFloat(statusText) {
+      function showCallBarAndFloat(st) {
         if (callIndicatorElement) callIndicatorElement.remove();
         callIndicatorElement = document.createElement("div");
         callIndicatorElement.className = "call-indicator-bar";
-        callIndicatorElement.innerHTML = `<div><i class="fa-solid fa-phone"></i> ${escapeHtml(currentContact.name)} <span id="callStateSpan">${statusText}</span></div><div id="callTimerDisplay">00:00</div>`;
+        callIndicatorElement.innerHTML = `<div><i class="fa-solid fa-phone"></i> ${escapeHtml(currentContact.name)} <span id="callStateSpan">${st}</span></div><div id="callTimerDisplay">00:00</div>`;
         document.body.appendChild(callIndicatorElement);
         if (endCallFloatBtn) endCallFloatBtn.remove();
         endCallFloatBtn = document.createElement("button");
@@ -915,93 +1080,85 @@
         endCallFloatBtn.onclick = () => endCurrentCall();
         document.body.appendChild(endCallFloatBtn);
       }
-      function updateCallStatus(text) {
-        const span = document.getElementById("callStateSpan");
-        if (span) span.innerText = text;
+      function updateCallStatus(t) {
+        const s = document.getElementById("callStateSpan");
+        if (s) s.innerText = t;
       }
       function endCurrentCall() {
         if (callState === "connected" && callStartTimestamp) {
-          const durationSec = Math.floor(
-            (Date.now() - callStartTimestamp) / 1000,
-          );
-          if (durationSec > 0) {
-            const mins = Math.floor(durationSec / 60),
-              secs = durationSec % 60;
+          const d = Math.floor((Date.now() - callStartTimestamp) / 1000);
+          if (d > 0) {
+            const m = Math.floor(d / 60),
+              s = d % 60;
             addToTimeline({
               type: "audio_call",
-              duration: `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`,
+              duration: `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`,
               timestamp: Date.now(),
             });
           }
         }
         if (callIndicatorElement) callIndicatorElement.remove();
         if (endCallFloatBtn) endCallFloatBtn.remove();
-        if (videoCallOverlay) videoCallOverlay.remove();
+        if (videoCallOverlay) videoCallOverlay?.remove();
         callState = "idle";
         if (callTimerInterval) clearInterval(callTimerInterval);
       }
 
-      // voice recording with simple logic
-      function initVoiceRecording() {
+      // Voice recording hold
+      function initVoice() {
         const mic = document.getElementById("micBtn");
-        let pressTimer;
+        let t;
         mic.addEventListener("mousedown", () => {
-          pressTimer = setTimeout(() => {
-            if (!isRecording) startVoiceRecording();
-          }, 200);
+          t = setTimeout(() => startVoiceRecording(), 200);
         });
         mic.addEventListener("mouseup", () => {
-          if (pressTimer) clearTimeout(pressTimer);
+          if (t) clearTimeout(t);
           if (isRecording) stopVoiceRecording();
         });
         mic.addEventListener("touchstart", (e) => {
           e.preventDefault();
-          pressTimer = setTimeout(() => {
-            if (!isRecording) startVoiceRecording();
-          }, 200);
+          t = setTimeout(() => startVoiceRecording(), 200);
         });
         mic.addEventListener("touchend", () => {
-          if (pressTimer) clearTimeout(pressTimer);
+          if (t) clearTimeout(t);
           if (isRecording) stopVoiceRecording();
         });
       }
       async function startVoiceRecording() {
         if (isRecording) return;
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-          });
-          mediaRecorder = new MediaRecorder(stream);
+          const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(s);
           voiceChunks = [];
           mediaRecorder.ondataavailable = (e) => {
             if (e.data.size > 0) voiceChunks.push(e.data);
           };
           mediaRecorder.onstop = () => {
             const blob = new Blob(voiceChunks, { type: "audio/webm" });
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              const durationSec = Math.round(
+            const fr = new FileReader();
+            fr.onloadend = () => {
+              const durSec = Math.round(
                 (Date.now() - recordingStartTime) / 1000,
               );
-              const mins = Math.floor(durationSec / 60),
-                secs = durationSec % 60;
-              if (durationSec >= 1)
+              const m = Math.floor(durSec / 60),
+                sec = durSec % 60;
+              if (durSec >= 1)
                 addToTimeline({
                   type: "voice_note",
-                  audioData: reader.result,
-                  duration: `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`,
+                  audioData: fr.result,
+                  duration: `${m.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`,
                   timestamp: Date.now(),
                 });
-              stream.getTracks().forEach((t) => t.stop());
+              s.getTracks().forEach((t) => t.stop());
             };
-            reader.readAsDataURL(blob);
+            fr.readAsDataURL(blob);
           };
           mediaRecorder.start(200);
           isRecording = true;
           recordingStartTime = Date.now();
-          document.getElementById("micBtn").style.background = "#ff4d4d";
+          document.getElementById("micBtn").classList.add("recording-active");
         } catch (e) {
-          alert("Microphone needed");
+          alert("Microphone access needed");
         }
       }
       function stopVoiceRecording() {
@@ -1012,119 +1169,105 @@
         ) {
           mediaRecorder.stop();
           isRecording = false;
-          document.getElementById("micBtn").style.background = "";
+          document
+            .getElementById("micBtn")
+            .classList.remove("recording-active");
         }
       }
 
-      // SWIPE TO REPLY with resistance
-      function initSwipeReply() {
-        const container = document.getElementById("messagesContainer");
+      // Swipe reply with resistance
+      function initSwipe() {
+        const cont = document.getElementById("messagesContainer");
         let startX = 0,
-          currentMsg = null,
-          initialTranslate = 0,
+          curMsg = null,
           isSwiping = false;
-        container.addEventListener("touchstart", (e) => {
+        cont.addEventListener("touchstart", (e) => {
           const msg = e.target.closest(".message");
           if (!msg) return;
           startX = e.touches[0].clientX;
-          currentMsg = msg;
-          initialTranslate = 0;
+          curMsg = msg;
           isSwiping = true;
           msg.style.transition = "none";
         });
-        container.addEventListener("touchmove", (e) => {
-          if (!isSwiping || !currentMsg) return;
+        cont.addEventListener("touchmove", (e) => {
+          if (!isSwiping || !curMsg) return;
           let dx = e.touches[0].clientX - startX;
           if (dx < 0) dx = 0;
           const resistance = Math.min(dx * 0.6, 80);
-          currentMsg.style.transform = `translateX(${resistance}px)`;
-          if (resistance > 50) currentMsg.style.opacity = "0.8";
+          curMsg.style.transform = `translateX(${resistance}px)`;
         });
-        container.addEventListener("touchend", (e) => {
-          if (!currentMsg) return;
-          const finalX = parseFloat(
-            currentMsg.style.transform?.match(/-?\d+/)?.[0] || 0,
+        cont.addEventListener("touchend", () => {
+          if (!curMsg) {
+            isSwiping = false;
+            return;
+          }
+          const val = parseFloat(
+            curMsg.style.transform?.match(/-?\d+/)?.[0] || 0,
           );
-          if (finalX > 55) {
-            const replyText = currentMsg
+          if (val > 55) {
+            const text = curMsg
               .querySelector(".bubble")
               ?.innerText.slice(0, 60);
-            const senderClass = currentMsg.classList.contains("sent")
+            const sender = curMsg.classList.contains("sent")
               ? "You"
               : currentContact.name;
-            showReplyPreview(replyText, senderClass);
+            const prev = document.querySelector(".reply-preview");
+            if (prev) prev.remove();
+            const preview = document.createElement("div");
+            preview.className = "reply-preview";
+            preview.innerHTML = `<span><strong>Replying to ${sender}:</strong> ${escapeHtml(text)}</span><button class="cancel-reply"><i class="fa-regular fa-circle-xmark"></i></button>`;
+            document.querySelector(".input-area").before(preview);
+            preview.querySelector(".cancel-reply").onclick = () => {
+              replyToMessage = null;
+              preview.remove();
+            };
+            replyToMessage = { text, sender };
           }
-          currentMsg.style.transition =
+          curMsg.style.transition =
             "transform 0.2s cubic-bezier(0.1,0.9,0.3,1.1)";
-          currentMsg.style.transform = "translateX(0px)";
-          currentMsg.style.opacity = "";
+          curMsg.style.transform = "translateX(0px)";
           setTimeout(() => {
-            if (currentMsg) currentMsg.style.transition = "";
+            if (curMsg) curMsg.style.transition = "";
           }, 200);
-          currentMsg = null;
+          curMsg = null;
           isSwiping = false;
         });
       }
-      function showReplyPreview(text, senderName) {
-        replyToMessage = { text, sender: senderName };
-        let existing = document.querySelector(".reply-preview");
-        if (existing) existing.remove();
-        const preview = document.createElement("div");
-        preview.className = "reply-preview";
-        preview.innerHTML = `<span><strong>Replying to ${senderName}:</strong> ${escapeHtml(text)}</span><button class="cancel-reply"><i class="fa-regular fa-circle-xmark"></i></button>`;
-        document.querySelector(".input-area").before(preview);
-        preview.querySelector(".cancel-reply").onclick = () => {
-          replyToMessage = null;
-          preview.remove();
-        };
-      }
 
-      // Reactions with animation
-      function attachReactions() {
+      // Reactions with context menu
+      function initReactions() {
         document
           .getElementById("messagesContainer")
           .addEventListener("contextmenu", (e) => {
             e.preventDefault();
-            const msgDiv = e.target.closest(".message");
-            if (!msgDiv) return;
+            const msg = e.target.closest(".message");
+            if (!msg) return;
             const emojis = ["❤️", "😂", "🔥", "👍"];
-            const pickerDiv = document.createElement("div");
-            pickerDiv.style.position = "fixed";
-            pickerDiv.style.bottom = "100px";
-            pickerDiv.style.left = "20px";
-            pickerDiv.style.background = "var(--card-glass)";
-            pickerDiv.style.borderRadius = "40px";
-            pickerDiv.style.padding = "8px 12px";
-            pickerDiv.style.display = "flex";
-            pickerDiv.style.gap = "12px";
-            pickerDiv.style.zIndex = "300";
-            emojis.forEach((emoji) => {
+            const picker = document.createElement("div");
+            picker.style.cssText =
+              "position:fixed;bottom:100px;left:20px;background:var(--card-glass);border-radius:40px;padding:8px 12px;display:flex;gap:12px;z-index:300;backdrop-filter:blur(12px)";
+            emojis.forEach((emo) => {
               const btn = document.createElement("button");
-              btn.innerText = emoji;
-              btn.style.background = "none";
-              btn.style.fontSize = "26px";
-              btn.style.border = "none";
+              btn.innerText = emo;
+              btn.style.cssText =
+                "background:none;font-size:26px;border:none;cursor:pointer";
               btn.onclick = () => {
-                const msgTextEl = msgDiv.querySelector(".bubble");
-                const reactionsDiv =
-                  msgDiv.querySelector(".message-reactions") ||
-                  (() => {
-                    const rd = document.createElement("div");
-                    rd.className = "message-reactions";
-                    msgDiv.querySelector(".bubble").appendChild(rd);
-                    return rd;
-                  })();
+                let rediv = msg.querySelector(".message-reactions");
+                if (!rediv) {
+                  rediv = document.createElement("div");
+                  rediv.className = "message-reactions";
+                  msg.querySelector(".bubble").appendChild(rediv);
+                }
                 const span = document.createElement("span");
                 span.className = "reaction-emoji";
-                span.innerText = emoji;
-                span.style.animation = "floatUp 0.25s ease-out";
-                reactionsDiv.appendChild(span);
-                pickerDiv.remove();
+                span.innerText = emo;
+                rediv.appendChild(span);
+                picker.remove();
               };
-              pickerDiv.appendChild(btn);
+              picker.appendChild(btn);
             });
-            document.body.appendChild(pickerDiv);
-            setTimeout(() => pickerDiv.remove(), 3000);
+            document.body.appendChild(picker);
+            setTimeout(() => picker.remove(), 3000);
           });
       }
 
@@ -1137,20 +1280,32 @@
         currentContact = JSON.parse(stored);
         return true;
       }
-      function renderChatHeader() {
+      function renderHeader() {
         document.getElementById("chatName").innerText = currentContact.name;
-        const avatarEl = document.getElementById("chatAvatar");
+        const av = document.getElementById("chatAvatar");
         if (currentContact.photo && currentContact.photo !== "") {
-          avatarEl.style.backgroundImage = `url(${currentContact.photo})`;
-          avatarEl.style.backgroundSize = "cover";
-          avatarEl.innerText = "";
+          av.style.backgroundImage = `url(${currentContact.photo})`;
+          av.style.backgroundSize = "cover";
+          av.innerText = "";
         } else {
-          avatarEl.style.background =
-            "linear-gradient(135deg, #a855f7, #06b6d4)";
-          avatarEl.innerText = currentContact.name.charAt(0).toUpperCase();
+          av.style.background = "linear-gradient(135deg, #a855f7, #06b6d4)";
+          av.innerText = currentContact.name.charAt(0).toUpperCase();
         }
+        document.getElementById("modalAvatar").innerHTML =
+          av.innerText || currentContact.name.charAt(0);
+        document.getElementById("modalName").innerText = currentContact.name;
+        document.getElementById("onlineStatus").innerHTML =
+          currentContact.online ? "🟢 Online" : "last seen recently";
       }
-      function initEmojiPicker() {
+
+      function init() {
+        if (!loadContact()) return;
+        renderHeader();
+        renderUnifiedTimeline();
+        initVoice();
+        initSwipe();
+        initReactions();
+        const pickerDiv = document.getElementById("emojiPicker");
         const emojis = [
           "😀",
           "😂",
@@ -1165,44 +1320,26 @@
           "👋",
           "💯",
         ];
-        const pickerDiv = document.getElementById("emojiPicker");
         pickerDiv.innerHTML = emojis
           .map((e) => `<div class="emoji-option">${e}</div>`)
           .join("");
-        pickerDiv.style.display = "none";
         document.getElementById("emojiBtn").onclick = (e) => {
           e.stopPropagation();
-          pickerDiv.style.display =
-            pickerDiv.style.display === "none" ? "grid" : "none";
+          pickerDiv.classList.toggle("active");
         };
         document.querySelectorAll(".emoji-option").forEach((opt) => {
           opt.addEventListener("click", () => {
-            const input = document.getElementById("messageInput");
-            input.value += opt.textContent;
-            input.focus();
-            pickerDiv.style.display = "none";
+            const inp = document.getElementById("messageInput");
+            inp.value += opt.textContent;
+            inp.focus();
+            pickerDiv.classList.remove("active");
           });
         });
-      }
-
-      function init() {
-        if (!loadContact()) return;
-        renderChatHeader();
-        renderUnifiedTimeline();
-        initEmojiPicker();
-        initFileUpload();
-        initVoiceRecording();
-        initSwipeReply();
-        attachReactions();
         document.getElementById("sendBtn").onclick = () => {
           const inp = document.getElementById("messageInput");
           if (inp.value.trim())
             addTextMessage(inp.value, "sent", replyToMessage);
           inp.value = "";
-          if (replyToMessage) {
-            replyToMessage = null;
-            document.querySelector(".reply-preview")?.remove();
-          }
         };
         document.getElementById("backBtn").onclick = () =>
           (window.location.href = "index.html");
@@ -1211,13 +1348,13 @@
         document.getElementById("videoCallBtn").onclick = () =>
           startVideoCall();
         document.getElementById("menuMoreBtn").onclick = () =>
-          (document.getElementById("contactModal").style.display = "flex");
+          document.getElementById("contactModal").classList.add("active");
         document.getElementById("contactModal").onclick = (e) => {
           if (e.target === document.getElementById("contactModal"))
-            document.getElementById("contactModal").style.display = "none";
+            document.getElementById("contactModal").classList.remove("active");
         };
         document.getElementById("modalCallBtn").onclick = () => {
-          document.getElementById("contactModal").style.display = "none";
+          document.getElementById("contactModal").classList.remove("active");
           showIncomingCall();
         };
         document
@@ -1225,31 +1362,28 @@
           .addEventListener("keypress", (e) => {
             if (e.key === "Enter") document.getElementById("sendBtn").click();
           });
-        function initFileUpload() {
-          const fileInput = document.getElementById("fileUploadInput");
-          document.getElementById("attachBtn").onclick = () =>
-            fileInput.click();
-          fileInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (file && file.size < 15 * 1024 * 1024) {
-              const reader = new FileReader();
-              reader.onload = (ev) => {
-                addToTimeline({
-                  type: "file",
-                  sender: "sent",
-                  fileName: file.name,
-                  fileSizeLabel: formatFileSize(file.size),
-                  dataURL: ev.target.result,
-                  fileType: file.type,
-                  timestamp: Date.now(),
-                });
-              };
-              reader.readAsDataURL(file);
-            } else alert("Max 15MB");
-            fileInput.value = "";
-          };
-        }
-        setTimeout(() => document.getElementById("messageInput").focus(), 100);
+        const fileInput = document.getElementById("fileUploadInput");
+        document.getElementById("attachBtn").onclick = () => fileInput.click();
+        fileInput.onchange = (e) => {
+          const f = e.target.files[0];
+          if (f && f.size < 15 * 1024 * 1024) {
+            const r = new FileReader();
+            r.onload = (ev) => {
+              addToTimeline({
+                type: "file",
+                sender: "sent",
+                fileName: f.name,
+                fileSizeLabel: formatFileSize(f.size),
+                dataURL: ev.target.result,
+                fileType: f.type,
+                timestamp: Date.now(),
+              });
+            };
+            r.readAsDataURL(f);
+          } else alert("Max 15MB");
+          fileInput.value = "";
+        };
+        setTimeout(() => document.getElementById("messageInput").focus(), 200);
       }
       init();
     </script>
